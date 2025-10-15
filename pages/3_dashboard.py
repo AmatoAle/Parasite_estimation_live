@@ -6,6 +6,18 @@ import plotly.express as px
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 
+
+# ===============================
+# STREAMLIT CONFIG
+# ===============================
+st.set_page_config(
+    page_title="Analytical Dashboard – Parasite Monitoring",
+    page_icon="🪲",
+    layout="wide",                     # <<< forces full-width mode
+    initial_sidebar_state="expanded",
+)
+
+
 # ---------- Data ----------
 @st.cache_data
 def load_data():
@@ -245,4 +257,5 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
