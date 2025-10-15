@@ -16,11 +16,18 @@ def load_data():
     df = df.dropna(subset=["Date", "temperature_mean", "relativehumidity_mean", "no. of Adult males"])
     df = df.sort_values("Date").reset_index(drop=True)
 
-    # Arricchimento feature temporali
-    df["month"] = df["Date"].dt.month
-    df["month_name"] = df["Date"].dt.month_name(locale="it_IT") if hasattr(df["Date"].dt, "month_name") else df["Date"].dt.month.astype(str)
-    df["weekday"] = df["Date"].dt.weekday
-    df["weekday_name"] = df["Date"].dt.day_name(locale="it_IT") if hasattr(df["Date"].dt, "day_name") else df["Date"].dt.weekday.astype(str)
+    # Feature temporali (senza usare locale di sistema)
+    IT_MONTHS = ["gennaio","febbraio","marzo","aprile","maggio","giugno",
+                 "luglio","agosto","settembre","ottobre","novembre","dicembre"]
+    IT_WEEKDAYS = ["lunedì","martedì","mercoledì","giovedì","venerdì","sabato","domenica"]  # 0=Mon
+
+    df["month"] = df["Date"].dt.month            # 1..12
+    df["month_name"] = df["month"].apply(lambda m: IT_MONTHS[m-1])
+
+    df["weekday"] = df["Date"].dt.weekday        # 0..6 (Mon..Sun)
+    df["weekday_name"] = df["weekday"].apply(lambda d: IT_WEEKDAYS[d])
+
+    # ISO week (int)
     df["week"] = df["Date"].dt.isocalendar().week.astype(int)
 
     # Rolling stats (7 giorni)
@@ -28,6 +35,7 @@ def load_data():
     df["temp_7d_ma"] = df["temperature_mean"].rolling(7, min_periods=1).mean()
     df["hum_7d_ma"] = df["relativehumidity_mean"].rolling(7, min_periods=1).mean()
     return df
+
 
 def main():
     st.title("📊 Dashboard Analitica — Cicalino Data")
@@ -237,3 +245,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
